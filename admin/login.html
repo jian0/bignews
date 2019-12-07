@@ -38,6 +38,65 @@
     </div>
   </div>
 
+
+  <!-- Modal 模态框 -->
+  <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">温馨提示</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Body
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
+<script src="./libs/jquery-1.12.4.min.js"></script>
+<script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+<script>
+  $('.input_sub').on('click', function (e) {
+    e.preventDefault();
+    let userName = $('.input_txt').val().trim();
+    let password = $('.input_pass').val().trim();
+    if (userName == '') {
+      $('.modal-body').text('用户名不能为空');
+      $('#modelId').modal();
+    }
+    if (password == '') {
+      $('.modal-body').text('密码不能为空');
+      $('#modelId').modal();
+    }
+
+    $.ajax({
+      url: 'http://localhost:8080/api/v1/admin/user/login',
+      type: 'post',
+      data: {
+        username: userName,
+        password: password
+      },
+      success: function (res) {
+        console.log(res);
+        $('.modal-body').text(res.msg);
+        $('#modelId').modal();
+        if (res.code === 200) {
+          localStorage.setItem('token', res.token);
+          $('#modelId').on('hidden.bs.modal', function (e) {
+            location.href = './index.html';
+          })
+        }
+      }
+    })
+  })
+
+
+</script>
 
 </html>
