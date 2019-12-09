@@ -101,7 +101,12 @@
             type: 'get',
             success: function (res) {
                 console.log(res);
-
+                for(let key in res.data){
+                    // console.log(key);
+                    // console.log(res.data);
+                    $('.' + key).val(res.data[key]);
+                }
+                $('.user_pic').attr('src',res.data.userPic);
             }
         })
 
@@ -112,7 +117,7 @@
             let nickname = $('.nickname').val().trim();
             let email = $('.email').val().trim();
             let userPic = $('.user_pic').attr('src');
-            console.log(userPic);
+            // console.log(userPic);
 
             let password = $('.password').val().trim();
             if (username === '') {
@@ -144,21 +149,11 @@
 
     })
 
-    // $.ajax({
-    //         url: BigNew.user_edit,
-    //         type: 'post',
-    //         data: data,
-    //         success: function (res) {
-    //             console.dir(res);
-
-    //         }
-    //     })
-
 
     // 点击模态框确定键事件
-    // $('#btn-sure').on('click', function (e) {
-    //     $('#modelId').modal('hide');
-    // })
+    $('#btn-sure').on('click', function (e) {
+        $('#modelId').modal('hide');
+    })
 </script>
 
 </html>
