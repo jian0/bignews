@@ -13,12 +13,7 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 导入bootstrap的js文件 -->
     <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
-    <style>
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -103,23 +98,6 @@
         localStorage.removeItem('token');
         location.href = './login.html';
     })
-
-    // 点击侧边栏，显示对应的页面
-    $('.level01').on('click',function(){
-        $(this).addClass('active').siblings().removeClass('active');
-        if($(this).index() == 1){
-            $('.level02').slideToggle();
-            $('.level02 li:eq(0) a')[0].click();
-            $('.icon-arrowdownl').toggleClass('rotate0');
-        }
-    })
-
-    $('ul.level02 li').on('click',function(){
-        $(this).addClass('active').siblings().removeClass('active');
-    })
-
-
-
 
 </script>
 
