@@ -31,25 +31,170 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td>奇趣事</td>
                         <td>funny</td>
                         <td class="text-center">
                             <a href="javascript:void(0)" data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
                             <a href="javascript:void(0)" class="btn btn-danger btn-xs">删除</a>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
                             <a href="javascript:void(0)" class="btn btn-success" id="xinzengfenlei" data-toggle="modal"
-                                data-target="#myModal">新增分类</a>
+                                data-target="#exampleModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
+
+    <!-- 编辑内容模态框 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">新增分类</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- 建一个隐藏域，用于存储id -->
+                        <input type="hidden" id="hid" name="id">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">名称:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">slug:</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-cancel">取消</button>
+                    <button type="button" class="btn btn-primary" id="btn-sure">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="./libs/http.js"></script>
+
+<!-- 文章类别模板 -->
+<script type="text/html" id="article_category">
+    {{ each data}}
+        <tr >
+            <td>{{$value.name}}</td>
+            <td>{{$value.slug}}</td>
+            <td class="text-center">
+                <a href="javascript:void(0)" data-id = "{{$value.id}}" data-toggle="modal" class=" btn btn-info btn-xs" data-target="#exampleModal">编辑</a>
+                <a href="javascript:void(0)" data-id = "{{$value.id}}" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+    {{/each}}
+</script>
+<script>
+    $(function () {
+        getData();
+        // 显示所有文章类别
+        function getData() {
+            $.get({
+                url: BigNew.category_list,
+                success: function (res) {
+                    if (res.code === 200) {
+                        let data = template('article_category', res);
+                        $('tbody').html(data);
+                    }
+
+                }
+            })
+
+        }
+
+        $('#exampleModal').on('show.bs.modal', function (e) {
+            // 获取到点击的是哪个元素
+            let dom = e.relatedTarget;
+            // console.log(dom);
+            // 点新增分类，弹出模态框后重置表单的内容
+            $('form')[0].reset();
+            if (dom == $('#xinzengfenlei')[0]) {
+                $('#exampleModalLabel').text('文章分类编辑');
+                $('#btn-sure').text('新增');
+                $('#btn-sure').on('click', function () {
+                    let name = $('#recipient-name').val();
+                    let slug = $('#message-text').val();
+                    if(name == '' || slug == ''){
+                        alert('名称和slug不能为空！');
+                        return;
+                    }
+                    // 新增文章类别
+                    $.post({
+                        url: BigNew.category_add,
+                        data: {
+                            name: name,
+                            slug: slug
+                        },
+                        success: function (res) {
+                            // console.log(res);
+                            if (res.code === 201) {
+                                $('#exampleModal').modal('hide');
+                                getData();
+                            }
+                        }
+                    })
+                })
+            } else {
+                $('#exampleModalLabel').text('文章分类编辑');
+                $('#btn-sure').text('编辑');
+                // 编辑内容前要先获取id，发ajax请求展示数据
+                let id = $(dom).attr('data-id');
+                // 根据id查询指定文章类别
+                $.get({
+                    url: BigNew.category_search,
+                    data: { id: id },
+                    success: function (res) {
+                        // console.log(res);
+                        if (res.code === 200) {
+                            $('#recipient-name').val(res.data[0].name)
+                            $('#message-text').val(res.data[0].slug)
+                            // 修改隐藏域的id为数据对应的id
+                            $('#hid').val(res.data[0].id)
+                        }
+
+                    }
+                })
+            }
+        })
+
+        $('#btn-sure').on('click', function () {
+            let id = $('#hid').val();
+            let name = $('#recipient-name').val();
+            let slug = $('#message-text').val();
+            $.post({
+                url: BigNew.category_edit,
+                data: {
+                    id: id,
+                    name: name,
+                    slug: slug
+                },
+                success: function (res) {
+                    console.log(res);
+                    if (res.code === 200) {
+                        $('#exampleModal').modal('hide');
+                        getData();
+                    }
+                }
+            })
+        })
+    })
+
+</script>
 
 </html>
