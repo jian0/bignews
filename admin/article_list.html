@@ -73,5 +73,38 @@
         </div>
     </div>
 </body>
-
+<!-- 文章列表模板 -->
+<script type="text/html" id="article_list">
+    {{each data.data}}
+        <tr>
+            <td>{{$value.title}}</td>
+            <td>{{$value.author}}</td>
+            <td>{{$value.category}}</td>
+            <td class="text-center">{{$value.date}}</td>
+            <td class="text-center">{{$value.state}}</td>
+            <td class="text-center">
+                <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+                <a href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
+            </td>
+        </tr>
+    {{/each}}
+</script>
+<script src="./libs/http.js"></script>
+<script>
+    $(function(){
+        $.get({
+         url : BigNew.article_query,
+         data : {
+            perpage : 10
+         },
+         success : function(res){
+            // console.log(res);
+            if(res.code === 200){
+                let data = template('article_list',res);
+                $('tbody').html(data);
+            }
+         }   
+        })
+    })
+</script>
 </html>
