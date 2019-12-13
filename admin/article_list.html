@@ -55,7 +55,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td>王积千造统最头</td>
                         <td>杰克</td>
                         <td>奇趣事</td>
@@ -65,7 +65,7 @@
                             <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
             <div class="row text-center">
@@ -73,6 +73,13 @@
         </div>
     </div>
 </body>
+<!-- 所有分类模板 -->
+<script type="text/html" id="selCategory_list">
+    <option value="">所有分类</option>
+    {{each data}}
+        <option>{{$value.name}}</option>
+    {{/each}}
+</script>
 <!-- 文章列表模板 -->
 <script type="text/html" id="article_list">
     {{each data.data}}
@@ -91,20 +98,37 @@
 </script>
 <script src="./libs/http.js"></script>
 <script>
-    $(function(){
+    $(function () {
         $.get({
-         url : BigNew.article_query,
-         data : {
-            perpage : 10
-         },
-         success : function(res){
-            // console.log(res);
-            if(res.code === 200){
-                let data = template('article_list',res);
-                $('tbody').html(data);
+            url: BigNew.article_query,
+            data: {
+                perpage: 10
+            },
+            success: function (res) {
+                // console.log(res);
+                if (res.code === 200) {
+                    let data = template('article_list', res);
+                    $('tbody').html(data);
+                }
             }
-         }   
         })
+
+        $.get({
+            url: BigNew.category_list,
+            success: function (res) {
+                if (res.code === 200) {
+                    let data = template('selCategory_list',res);
+                    $('#selCategory').html(data);
+                }
+
+            }
+        })
+
+
+
+
+
     })
 </script>
+
 </html>
