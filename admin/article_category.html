@@ -95,7 +95,7 @@
             <td>{{$value.slug}}</td>
             <td class="text-center">
                 <a href="javascript:void(0)" data-id = "{{$value.id}}" data-toggle="modal" class=" btn btn-info btn-xs" data-target="#exampleModal">编辑</a>
-                <a href="javascript:void(0)" data-id = "{{$value.id}}" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void(0)" data-id = "{{$value.id}}" class="btn btn-danger btn-xs" id="btn-del">删除</a>
             </td>
         </tr>
     {{/each}}
@@ -130,7 +130,7 @@
                 $('#btn-sure').on('click', function () {
                     let name = $('#recipient-name').val();
                     let slug = $('#message-text').val();
-                    if(name == '' || slug == ''){
+                    if (name == '' || slug == '') {
                         alert('名称和slug不能为空！');
                         return;
                     }
@@ -193,7 +193,26 @@
                 }
             })
         })
+        // 实现删除功能
+        $('tbody').on('click', '#btn-del', function () {
+            let id = $(this).attr('data-id');
+            console.log(id);
+            if (confirm('你确定要删除吗')) {
+                $.post({
+                    url: BigNew.category_delete,
+                    data: { id: id },
+                    success: function (res) {
+                        // console.log(res);
+                        if (res.code === 204) {
+                            getData();
+                        }
+                    }
+                })
+            }
+        })
+
     })
+
 
 </script>
 
